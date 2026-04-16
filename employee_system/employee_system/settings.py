@@ -94,6 +94,19 @@ WSGI_APPLICATION = 'employee_system.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 import dj_database_url
+import urllib.parse
+
+def clean_db_url(url):
+    if not url: return url
+    if '://' in url:
+        scheme, rest = url.split('://', 1)
+        if '@' in rest:
+            user_pass, host_db = rest.rsplit('@', 1)
+            if ':' in user_pass:
+                user, password = user_pass.split(':', 1)
+                safe_password = urllib.parse.quote(urllib.parse.unquote(password))
+                return f"{scheme}://{user}:{safe_password}@{host_db}"
+    return url
 
 DATABASES = {
     'default': {
@@ -108,14 +121,14 @@ DATABASES = {
 
 if os.environ.get('SUPABASE_DB_URL'):
     DATABASES['default'] = dj_database_url.config(
-        default=os.environ.get('SUPABASE_DB_URL'),
+        default=clean_db_url(os.environ.get('SUPABASE_DB_URL')),
         conn_max_age=600,
         conn_health_checks=True,
         ssl_require=True,
     )
 elif os.environ.get('DATABASE_URL'):
     DATABASES['default'] = dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
+        default=clean_db_url(os.environ.get('DATABASE_URL')),
         conn_max_age=600,
         conn_health_checks=True,
     )
