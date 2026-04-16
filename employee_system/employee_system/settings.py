@@ -107,15 +107,11 @@ DATABASES = {
     }
 }
 
-# Capture whichever URL you pasted into Render
-cli_url = os.environ.get('SUPABASE_DB_URL') or os.environ.get('DATABASE_URL')
-
-if cli_url:
+if os.environ.get('DATABASE_URL'):
     DATABASES['default'] = dj_database_url.config(
-        default=cli_url,
+        default=os.environ.get('DATABASE_URL'),
         conn_max_age=600,
         conn_health_checks=True,
-        ssl_require=True,
     )
 
 
