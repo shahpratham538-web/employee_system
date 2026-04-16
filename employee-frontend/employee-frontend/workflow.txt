@@ -1,0 +1,126 @@
+=============================================================================
+           EMPLOYEE MANAGEMENT SYSTEM - TEST WORKFLOW & TEST CASES
+=============================================================================
+This document outlines the systematic workflows and test cases needed to 
+validate the entire React Frontend and Django Backend integration.
+
+-----------------------------------------------------------------------------
+1. END-TO-END WORKFLOWS (USER JOURNEYS)
+-----------------------------------------------------------------------------
+[ ] Workflow 1: New Employee Onboarding
+    - Navigate to public HomePage.
+    - Click "Get Started" -> Redirection to Signup.
+    - Submit Signup -> Success toast -> Redirection to Login.
+    - Login with new credentials -> Redirection to Dashboard.
+    - Verify initial Dashboard states (empty state or defaults).
+
+[ ] Workflow 2: Daily Operations Journey
+    - Login as User -> Route to Dashboard.
+    - Click "Attendance" in sidebar -> Mark clock-in -> Status updates.
+    - Click "Leave" in sidebar -> Request time off -> Status updates to Pending.
+    - Click "Logout" -> Clear tokens -> Redirection to Login.
+
+[ ] Workflow 3: HR/Admin Administration
+    - Login as HR/ADMIN.
+    - Click "Employees" -> List loads successfully.
+    - Click on an employee row -> Navigates to Employee Detail view.
+    - Click "Payroll" -> Generates or lists payroll slips.
+
+
+-----------------------------------------------------------------------------
+2. PAGE & UI COMPONENT TEST CASES
+-----------------------------------------------------------------------------
+A. HomePage (`/`)
+    [ ] UI Validation: Hero image loads, text is visible, animations trigger.
+    [ ] Button Test: "Login" button correctly links to `/login`.
+    [ ] Button Test: "Get Started" buttons correctly link to `/signup`.
+    [ ] Navigation Test: Pressing "ev" logo acts as a home refresher.
+
+B. Signup Page (`/signup`)
+    [ ] Form Validation: Submitting empty form blocks action with required constraints.
+    [ ] Form Validation: Using an already existing Username throws error toast.
+    [ ] Success State: Submitting valid info triggers success toast and redirects.
+    
+C. Login Page (`/login`)
+    [ ] Error State: Invalid credentials trigger an error toast ("Invalid username/password").
+    [ ] Loading State: "Signing In..." spinner appears during API wait.
+    [ ] Success State: Valid credentials generate access/refresh tokens in localStorage.
+
+D. Sidebar & Layout
+    [ ] Active State: Clicking sidebar items updates URL and highlights active item.
+    [ ] Responsive: Sidebar collapses or shows mobile menu on small screens.
+    [ ] User Info: Rendered name/role accurately mirrors decoded JWT token payload.
+    [ ] Logout Button: Successfully drops tokens and shifts to `/login`.
+
+E. Dashboard (`/dashboard`)
+    [ ] API Load Test: Ensure `fetchDashboardData` fires on mount.
+    [ ] State Render: Widgets (Total Employees, Attendance %) match backend payload.
+
+F. Employees Page (`/employees`)
+    [ ] Data Render: Table populates with records fetched from backend.
+    [ ] Search/Filter: Typing in search input narrows down the table results.
+    [ ] Routing Hook: Clicking 'View Profile' routes exactly to `/employees/:id`.
+
+G. Employee Detail (`/employees/:id`)
+    [ ] Dynamic Fetch: Grabs profile info based on URL ID parameter.
+    [ ] Fallback: If ID is invalid, falls back to a 404 or gracefully alerts user.
+
+
+-----------------------------------------------------------------------------
+3. API AND AUTHENTICATION TEST CASES
+-----------------------------------------------------------------------------
+[ ] JWT Token Storage
+    - After login, verify `access` and `refresh` are present in localStorage.
+    
+[ ] JWT Token Injection (Axios Interception)
+    - Verify any request (like `/api/employees/`) contains `Authorization: Bearer <token>` in Network tab headers.
+
+[ ] Refresh Token Logic 
+    - Wait for access token to expire (or artificially expire it), trigger an API call.
+    - Verify Axios interceptor catches 401, calls `/api/token/refresh/`, updates token, and retries original request.
+
+[ ] Logout Persistence
+    - Post-logout, verify localStorage is cleared. 
+    - Hitting "Back" browser button to `/dashboard` redirects user back to `/login`.
+
+
+-----------------------------------------------------------------------------
+4. ROLE-BASED ACCESS CONTROL (RBAC) TEST CASES
+-----------------------------------------------------------------------------
+[ ] Employee Constraints (Role = "EMPLOYEE")
+    - Attempt to visit `/employees` directly via URL address bar.
+    - Expected Result: ProtectedRoute catches insufficient role, redirects to `/dashboard` or blocks access.
+    
+[ ] HR/ADMIN Constraints (Role = "HR" or "ADMIN")
+    - Login as HR.
+    - Visit `/employees` -> Expected Result: Successfully renders.
+    
+[ ] API Level Protection
+    - Attempt to fire a DELETE request to `/api/employees/1/` using a regular "EMPLOYEE" payload token on Postman.
+    - Expected Result: Backend returns `403 Forbidden`.
+
+
+-----------------------------------------------------------------------------
+5. MODULE-SPECIFIC BACKEND API TESTS (via Postman/Swagger)
+-----------------------------------------------------------------------------
+[ ] accounts
+    - POST /api/auth/register/ (Verify new user propagates in DB)
+    - POST /api/token/ (Verify tokens drop correctly with Role data injected)
+    - POST /api/token/refresh/ (Verify rotation)
+    
+[ ] attendance
+    - GET /api/attendance/ (List attendance records for token user)
+    - POST /api/attendance/ (Clock-in attempt, ensure fails if existing open shift)
+    - PATCH /api/attendance/{id}/ (Clock-out attempt)
+
+[ ] leave
+    - GET /api/leave/ (List leaves)
+    - POST /api/leave/ (Create leave request)
+    - PATCH /api/leave/{id}/ (Approve/Reject leaves, confirm requires HR token)
+
+[ ] payroll
+    - GET /api/payroll/ (List payrolls)
+    - POST /api/payroll/ (Generate payroll, confirm requires HR token)
+    - GET /api/payroll/{id}/pdf (Verify PDF stream downloads successfully)
+
+=============================================================================

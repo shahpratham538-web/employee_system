@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #2d2f2f;
+    background-color: #f6f6f6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f0f1f1;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #acadad;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #767777;
+  }
+}
+
+@layer components {
+  /* Glass effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-dark {
+    background: rgba(51, 51, 51, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Ghost border */
+  .ghost-border {
+    border: 1px solid rgba(172, 173, 173, 0.15);
+  }
+
+  /* Table row hover */
+  .table-row-hover {
+    transition: background-color 0.15s ease;
+  }
+  .table-row-hover:hover {
+    background-color: rgba(45, 47, 47, 0.03);
+  }
+
+  /* Active sidebar blade */
+  .sidebar-active {
+    position: relative;
+  }
+  .sidebar-active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 60%;
+    background: #8BC34A;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Gradient CTA */
+  .btn-gradient {
+    background: linear-gradient(135deg, #8BC34A 0%, #c1fd7c 100%);
+    color: #396100;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  .btn-gradient:hover {
+    box-shadow: 0 8px 24px rgba(139, 195, 74, 0.3);
+    transform: translateY(-1px);
+  }
+
+  /* Stat card glow */
+  .stat-glow {
+    box-shadow: 0 0 40px rgba(139, 195, 74, 0.08);
+  }
+
+  /* Input focus ring */
+  .input-focus-ring:focus {
+    outline: none;
+    border-color: #8BC34A;
+    box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.15);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
