@@ -33,6 +33,13 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1', 't']
 
 ALLOWED_HOSTS = ['*']
 
+# Tell Django it's sitting behind a secure proxy (Fixes HTTPS CSRF scheme violations)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Explicitly trust Railway and Vercel domains for CSRF payloads (Allows Admin Login)
+csrf_env = os.environ.get('CSRF_TRUSTED_ORIGINS', 'https://employeesystem-production-ee11.up.railway.app,https://employee-system-xi-opal.vercel.app')
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_env.split(',')]
+
 
 # Application definition
 
