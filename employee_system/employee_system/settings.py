@@ -96,42 +96,13 @@ WSGI_APPLICATION = 'employee_system.wsgi.application'
 import dj_database_url
 import urllib.parse
 
-def clean_db_url(url):
-    if not url: return url
-    if '://' in url:
-        scheme, rest = url.split('://', 1)
-        if '@' in rest:
-            user_pass, host_db = rest.rsplit('@', 1)
-            if ':' in user_pass:
-                user, password = user_pass.split(':', 1)
-                safe_password = urllib.parse.quote(urllib.parse.unquote(password))
-                return f"{scheme}://{user}:{safe_password}@{host_db}"
-    return url
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'employee_db'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'pratham'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
-
-if os.environ.get('SUPABASE_DB_URL'):
-    DATABASES['default'] = dj_database_url.config(
-        default=clean_db_url(os.environ.get('SUPABASE_DB_URL')),
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True,
-    )
-elif os.environ.get('DATABASE_URL'):
-    DATABASES['default'] = dj_database_url.config(
-        default=clean_db_url(os.environ.get('DATABASE_URL')),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
 
 
 # Password validation
@@ -199,4 +170,4 @@ USE_TZ = True
 # Load CORS Allowed Origins from .env (comma-separated list)
 cors_env = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000')
 CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_env.split(',')]
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True
