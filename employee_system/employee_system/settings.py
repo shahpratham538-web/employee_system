@@ -97,12 +97,26 @@ import dj_database_url
 import urllib.parse
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'employee_db'),
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'pratham'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
+    }
 }
+
+# Capture whichever URL you pasted into Render
+cli_url = os.environ.get('SUPABASE_DB_URL') or os.environ.get('DATABASE_URL')
+
+if cli_url:
+    DATABASES['default'] = dj_database_url.config(
+        default=cli_url,
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=True,
+    )
 
 
 # Password validation
