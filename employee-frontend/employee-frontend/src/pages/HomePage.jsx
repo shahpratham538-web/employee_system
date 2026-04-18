@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Shield, Activity, Globe, Database, Grid } from "lucide-react";
 
 export default function HomePage() {
-  const bgImageUrl = "https://lh3.googleusercontent.com/aida/ADBb0uh9IeI3gvqSGldG339F7UL2TUCzN0S9MafAt-JZc5Txln6BKxp1RI0u0clyJKndQUGUJ39KVgc30WCmxFNMESFdUt7mYQhEKzO_4v-BvMGWSVptSskTkhBYS1OV3QKXsykp_jgRbpmIw0oIR7rVED3dCmENKN5wXYYXz3OKG6oYgnXOEnMAldGn1xVSOM_QRh8Q13XUA2WWGd04jGR2fCV6nD09WPiOtjIiK1OsUWz2r9L6thcfhubBD5s";
+  const bgImageUrl = "/1bf6c7a7d322283644f28497f1cc23a5.jpg";
 
   return (
     <div className="font-sans antialiased text-on-surface bg-surface select-none">
@@ -11,7 +11,7 @@ export default function HomePage() {
         {/* Background Image & Overlay */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 transition-transform duration-1000 scale-105"
-          style={{ backgroundImage: `url(${bgImageUrl}), linear-gradient(to bottom, #111, #333)` }}
+          style={{ backgroundImage: `url(${bgImageUrl})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-10" />
 
